@@ -28,3 +28,17 @@ transaction_detail = pd.concat([transaction_detail_1, transaction_detail_2], ign
 # transaction_detailとtransactionを横に結合（粒度の細かいtransaction_detailがメイン）
 join_data = pd.merge(transaction_detail, transaction[["transaction_id", "payment_date", "customer_id"]], on="transaction_id", how="left")
 
+# join_dataとcustomer_master,item_masterを横に結合（粒度の細かいtransaction_detailがメイン）
+join_data = pd.merge(join_data, customer_master, on="customer_id", how="left")
+join_data = pd.merge(join_data, item_master, on="item_id", how="left")
+
+# quantityとitem_priceからpriceを算出
+join_data["price"] = join_data["quantity"] * join_data["item_price"]
+
+# object ⇒ datetime へ変換
+join_data['payment_date'] = pd.to_datetime(join_data['payment_date'])
+join_data['payment_month'] = join_data['payment_date'].dt.strftime('%Y%m') # 年月単位のカラムを作成
+join_data[['payment_date', 'payment_month']].head()
+
+# カラム別でデータを集計
+pd.pivot_table(join_data, index='item_name', columns='payment_month', values=['price', 'quantity'], aggfunc='sum')
