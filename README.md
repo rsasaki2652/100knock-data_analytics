@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from dateutil.relativedelta import relativedelta
 
-## ---------- 第１章：ウェブからの注文数を分析 ---------- ##
+### ---------- 第１章：ウェブからの注文数を分析 ---------- ###
 
 # データの読み込み
 customer_master = pd.read_csv('/content/drive/MyDrive/Colab Notebooks/1章/customer_master.csv')
@@ -42,3 +42,27 @@ join_data[['payment_date', 'payment_month']].head()
 
 # カラム別でデータを集計
 pd.pivot_table(join_data, index='item_name', columns='payment_month', values=['price', 'quantity'], aggfunc='sum')
+
+# 集計したデータの可視化
+graph_data = pd.pivot_table(join_data, index='payment_month', columns='item_name', values='price', aggfunc='sum')
+plt.plot(list(graph_data.index), graph_data['PC-A'], label='PC-A')
+plt.plot(list(graph_data.index), graph_data['PC-B'], label='PC-B')
+plt.plot(list(graph_data.index), graph_data['PC-C'], label='PC-C')
+plt.plot(list(graph_data.index), graph_data['PC-D'], label='PC-D')
+plt.plot(list(graph_data.index), graph_data['PC-E'], label='PC-E')
+plt.legend()
+
+### ------------------------------------------------- ###
+
+
+
+### ---------------- 第2章：データ加工 ---------------- ###
+
+uriage_data = pd.read_csv('/content/drive/MyDrive/Colab Notebooks/2章/uriage.csv')
+kokyaku_data = pd.read_excel('/content/drive/MyDrive/Colab Notebooks/2章/kokyaku_daicho.xlsx')
+uriage_data['purchase_date'] = pd.to_datetime(uriage_data['purchase_date'])
+uriage_data['purchase_month'] = uriage_data['purchase_date'].dt.strftime('%Y%m')
+
+# データの揺れを見る
+
+
